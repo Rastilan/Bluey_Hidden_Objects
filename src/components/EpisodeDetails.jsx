@@ -3,62 +3,16 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import db from "../firebase";
 import { setDoc, doc, getDoc } from "firebase/firestore";
-import { useSelector, useDispatch } from "react-redux";
-import { selectUserName, selectUserDocSnapshot, setUserDocSnapshot } from "../features/user/userSlice";
-
-
-
 
 const EpisodeDetails = () => {
-    const { season, episode } = useParams();
-    const [userData, setUserData] = useState(null);
-    const [foundLongDog, setFoundLongDog] = useState(false);
-    const userName = useSelector(selectUserName);
-    const userDocSnapshot = useSelector(selectUserDocSnapshot);
-    
-  
-    useEffect(() => {
-      const fetchFirebaseData = async () => {
-          try {
-              if (!userDocSnapshot) { // Fetch only if userDocSnapshot is null
-                  const userDocRef = doc(db, "userdata", userName);
-                  const snapshot = await getDoc(userDocRef);
-                  setUserDocSnapshot(snapshot); // Update userDocSnapshot in Redux store
-                  
-              } else if (userDocSnapshot.exists()) {
-                  const data = userDocSnapshot.data();
-                  setUserData(data); // Update userData when userDocSnapshot changes
-                  // Now you can access userData.title, userData.backgroundImg, etc.
+  const { season, episode } = useParams();
+  const [foundLongDog, setFoundLongDog] = useState(false);
 
-                  const seasonAndEpisode = `LongDog S${season}EP${episode}`;
-                  setFoundLongDog(data && data[seasonAndEpisode]);
-                  console.log(foundLongDog);
-              }
-          } catch (error) {
-              console.error("Error checking user document: ", error);
-          }
-
-      };
-        
-      fetchFirebaseData(); // Fetch data when component mounts or userDocSnapshot changes
-  }, [userDocSnapshot, userName]); // Add userDocSnapshot and userName as dependencies
-  
   const handleLongDogButton = async (val) => {
     const seasonAndEpisode = `${val} S0${season}EP0${episode}`;
-    const userDocRef = doc(db, "userdata", userName);
-    try {
-      if(userDocSnapshot.exists()) {
-        console.log(userDocRef)
-        await setDoc(userDocRef, {
-          [seasonAndEpisode]: foundLongDog
-        }, { merge: true });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  };
 
-    /*const handleLongDogButton = async (val) => {
+  /*const handleLongDogButton = async (val) => {
         
         try {
           const userDocRef = doc(db, "userdata", userName); 
@@ -103,212 +57,213 @@ const EpisodeDetails = () => {
         }
       };*/
 
-return (
+  return (
     <Container>
-    <Background>
-        <img alt={userDocSnapshot.title} src={userDocSnapshot.backgroundImg} />
-    </Background>
+      <Background>
+        <img alt="test" src="" />
+      </Background>
 
-    <ImageTitle>
-        <img alt={userDocSnapshot.title} src={userDocSnapshot.titleImg} />
-    </ImageTitle>
-    <ContentMeta>
+      <ImageTitle>
+        <img alt="test" src="" />
+      </ImageTitle>
+      <ContentMeta>
         <Controls>
-        <Player>
+          <Player>
             <img src="/imgs/play-icon-black.png" alt="" />
-            <span onClick={() => handleLongDogButton("LongDog")}>LongDog</span>        </Player>
-        <Trailer>
+            <span onClick={() => handleLongDogButton("LongDog")}>
+              LongDog
+            </span>{" "}
+          </Player>
+          <Trailer>
             <img src="/imgs/play-icon-white.png" alt="" />
             <span>test</span>
-        </Trailer>
-        <AddList>
+          </Trailer>
+          <AddList>
             <span />
             <span />
-        </AddList>
-        <GroupWatch>
+          </AddList>
+          <GroupWatch>
             <div>
-            <img src="/imgs/group-icon.png" alt="" />
+              <img src="/imgs/group-icon.png" alt="" />
             </div>
-        </GroupWatch>
+          </GroupWatch>
         </Controls>
-        <SubTitle>{userDocSnapshot.subTitle}</SubTitle>
-        <Description>{userDocSnapshot.description}</Description>
-    </ContentMeta>
+      </ContentMeta>
     </Container>
-);
+  );
 };
 
 const Container = styled.div`
-    position: relative;
-    min-height: calc(100vh-250px);
-    overflow-x: hidden;
-    display: block;
-    top: 72px;
-    padding: 0 calc(3.5vw + 5px);
+  position: relative;
+  min-height: calc(100vh-250px);
+  overflow-x: hidden;
+  display: block;
+  top: 72px;
+  padding: 0 calc(3.5vw + 5px);
 `;
 
 const Background = styled.div`
-    left: 0px;
-    opacity: 0.8;
-    position: fixed;
-    right: 0px;
-    top: 0px;
-    z-index: -1;
+  left: 0px;
+  opacity: 0.8;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  z-index: -1;
 
-img {
+  img {
     width: 100vw;
     height: 100vh;
 
     @media (max-width: 768px) {
-    width: initial;
+      width: initial;
     }
-}
+  }
 `;
 
 const ImageTitle = styled.div`
-    align-items: flex-end;
-    display: flex;
-    -webkit-box-pack: start;
-    justify-content: flex-start;
-    margin: 0px auto;
-    height: 30vw;
-    min-height: 170px;
-    padding-bottom: 24px;
-    width: 100%;
+  align-items: flex-end;
+  display: flex;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  margin: 0px auto;
+  height: 30vw;
+  min-height: 170px;
+  padding-bottom: 24px;
+  width: 100%;
 
-img {
+  img {
     max-width: 600px;
     min-width: 200px;
     width: 35vw;
-}
+  }
 `;
 
 const ContentMeta = styled.div`
-    max-width: 874px;
+  max-width: 874px;
 `;
 
 const Controls = styled.div`
-    align-items: center;
-    display: flex;
-    flex-flow: row nowrap;
-    margin: 24px 0px;
-    min-height: 56px;
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 24px 0px;
+  min-height: 56px;
 `;
 
 const Player = styled.button`
-    font-size: 15px;
-    margin: 0px 22px 0px 0px;
-    padding: 0px 24px;
-    height: 56px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: 1.8px;
-    text-align: center;
-    text-transform: uppercase;
-    background: rgb (249, 249, 249);
-    border: none;
-    color: rgb(0, 0, 0);
+  font-size: 15px;
+  margin: 0px 22px 0px 0px;
+  padding: 0px 24px;
+  height: 56px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1.8px;
+  text-align: center;
+  text-transform: uppercase;
+  background: rgb (249, 249, 249);
+  border: none;
+  color: rgb(0, 0, 0);
 
-img {
+  img {
     width: 32px;
-}
+  }
 
-&:hover {
+  &:hover {
     background: rgb(198, 198, 198);
-}
+  }
 
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
     height: 45px;
     padding: 0px 12px;
     font-size: 12px;
     margin: 0px 10px 0px 0px;
 
     img {
-    width: 25px;
+      width: 25px;
     }
-}
+  }
 `;
 
 const Trailer = styled(Player)`
-background: rgba(0, 0, 0, 0.3);
-border: 1px solid rgb(249, 249, 249);
-color: rgb(249, 249, 249);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgb(249, 249, 249);
+  color: rgb(249, 249, 249);
 `;
 
 const AddList = styled.div`
-margin-right: 16px;
-height: 44px;
-width: 44px;
-display: flex;
-justify-content: center;
-align-items: center;
-background-color: rgba(0, 0, 0, 0.6);
-border-radius: 50%;
-border: 2px solid white;
-cursor: pointer;
+  margin-right: 16px;
+  height: 44px;
+  width: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
 
-span {
+  span {
     background-color: rgb(249, 249, 249);
     display: inline-block;
 
     &:first-child {
-    height: 2px;
-    transform: translate(1px, 0px) rotate(0deg);
-    width: 16px;
+      height: 2px;
+      transform: translate(1px, 0px) rotate(0deg);
+      width: 16px;
     }
 
     &:nth-child(2) {
-    height: 16px;
-    transform: translateX(-8px) rotate(0deg);
-    width: 2px;
+      height: 16px;
+      transform: translateX(-8px) rotate(0deg);
+      width: 2px;
     }
-}
+  }
 `;
 
 const GroupWatch = styled.div`
-    height: 44px;
-    width: 44px;
+  height: 44px;
+  width: 44px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+
+  div {
+    height: 40px;
+    width: 40px;
+    background: rgb(0, 0, 0);
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    background: white;
 
-    div {
-        height: 40px;
-        width: 40px;
-        background: rgb(0, 0, 0);
-        border-radius: 50%;
-
-        img {
-        width: 100%;
-        }
+    img {
+      width: 100%;
     }
+  }
 `;
 
 const SubTitle = styled.div`
-    color: rgb(249, 249, 249);
-    font-size: 15px;
-    min-height: 20px;
+  color: rgb(249, 249, 249);
+  font-size: 15px;
+  min-height: 20px;
 
-    @media (max-width: 768px) {
-        font-size: 12px;
-    }
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const Description = styled.div`
-    line-height: 1.4;
-    font-size: 20px;
-    padding: 16px 0px;
-    color: rgb(249, 249, 249);
+  line-height: 1.4;
+  font-size: 20px;
+  padding: 16px 0px;
+  color: rgb(249, 249, 249);
 
-    @media (max-width: 768px) {
-        font-size: 14px;
-    }
-    `;
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+`;
 
-export default EpisodeDetails; 
+export default EpisodeDetails;
